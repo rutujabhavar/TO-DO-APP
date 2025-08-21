@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stylish To-Do List with Theme</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    :root {
+      --color-primary: #3a86ff;
+      --color-primary-dark: #265dff;
+      --color-bg-light: #f0f4f8;
+      --color-bg-dark: #121217;
+      --color-card-light: #ffffff;
+      --color-card-dark: #1e1e28;
+      --color-text-light: #222;
+      --color-text-dark: #ddd;
+      --color-accent: #ff5c5c;
+      --transition-fast: 0.3s ease;
+      --shadow-light: 0 8px 30px rgba(58, 134, 255, 0.2);
+      --shadow-dark: 0 8px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Light theme default */
+    body {
+      background: var(--color-bg-light);
+      color: var(--color-text-light);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 50px 20px;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+
+    /* Dark theme */
+    body.dark {
+      background: var(--color-bg-dark);
+      color: var(--color-text-dark);
+    }
+
+    .container {
+      background: var(--color-card-light);
+      width: 400px;
+      border-radius: 12px;
+      padding: 30px 30px 40px;
+      box-shadow: var(--shadow-light);
+      transition: background var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    body.dark .container {
+      background: var(--color-card-dark);
+      box-shadow: var(--shadow-dark);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 25px;
+      font-weight: 600;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    .theme-toggle {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: 2px solid var(--color-primary);
+      color: var(--color-primary);
+      padding: 6px 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      user-select: none;
+      outline-offset: 2px;
+    }
+
+    .toggle-btn:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .input-area input {
+      flex-grow: 1;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border-radius: 30px;
+      border: 2px solid #ddd;
+      outline: none;
+      transition: border-color 0.3s;
+      user-select: text;
+    }
+
+    .input-area input::placeholder {
+      color: #bbb;
+    }
+
+    .input-area input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 8px rgba(58, 134, 255, 0.4);
+    }
+
+    .input-area button {
+      background: var(--color-primary);
+      border: none;
+      color: white;
+      padding: 0 25px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    .input-area button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    ul.todo-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    ul.todo-list li {
+      background: #e9f0ff;
+      margin-bottom: 14px;
+      padding: 16px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 3px 8px rgba(58, 134, 255, 0.1);
+      transition:
+        background 0.3s ease,
+        box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    body.dark ul.todo-list li {
+      background: #2b2b39;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.8);
+    }
+
+    ul.todo-list li:hover {
+      background: var(--color-primary);
+      color: white;
+      box-shadow: 0 8px 25px rgba(58, 134, 255, 0.35);
+    }
+
+    ul.todo-list li.completed {
+      background: #b8e0d2;
+      color: #2f5d3f;
+      text-decoration: line-through;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    body.dark ul.todo-list li.completed {
+      background: #226644;
+      color: #b8e0d2;
+      text-decoration: line-through;
+      box-shadow: none;
+    }
+
+    .todo-text {
+      flex-grow: 1;
+      padding-right: 15px;
+      font-weight: 600;
+      font-size: 1rem;
+      overflow-wrap: break-word;
+      transition: color 0.3s;
+    }
+
+    /* Custom animated checkbox circle on left */
+    ul.todo-list li .checkmark {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid var(--color-primary);
+      margin-right: 15px;
+      flex-shrink: 0;
+      background: transparent;
+      transition: background 0.3s ease, border-color 0.3s ease;
+      position: relative;
+    }
+
+    ul.todo-list li.completed .checkmark {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    /* Checkmark icon */
+    ul.todo-list li.completed .checkmark::after {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 3px;
+      width: 6px;
+      height: 12px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    ul.todo-list li .checkmark::after {
+      opacity: 0;
+    }
+
+    .btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: #999;
+      transition: color 0.3s ease;
+      padding: 0;
+      user-select: none;
+    }
+
+    .btn:hover {
+      color: var(--color-primary);
+    }
+
+    .btn.delete {
+      color: var(--color-accent);
+    }
+
+    .btn.delete:hover {
+      color: #ff2b2b;
+    }
+
+    /* Fade out animation on delete */
+    .fade-out {
+      animation: fadeOut 0.4s forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        transform: translateX(50px);
+      }
+    }
+
+    /* Scrollbar styling for todo list */
+    ul.todo-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ul.todo-list::-webkit-scrollbar-thumb {
+      background: var(--color-primary);
+      border-radius: 20px;
+    }
+
+    ul.todo-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      text-align: center;
+      color: #666;
+      user-select: none;
+    }
+
+    body.dark .footer {
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="To-Do List App">
+    <div class="theme-toggle">
+      <button class="toggle-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle dark mode">Dark Mode</button>
+    </div>
+
+    <h1> To-Do List App</h1>
+
+    <div class="input-area">
+      <input
+        type="text"
+        id="todo-input"
+        placeholder="Add a new task..."
+        aria-label="New task input"
+        autocomplete="off"
+      />
+      <button id="add-btn" aria-label="Add task">Add</button>
+    </div>
+
+    <ul class="todo-list" id="todo-list" aria-live="polite" aria-relevant="additions removals">
+      <!-- Tasks go here -->
+    </ul>
+
+    <div class="footer">Click a task or its circle to toggle complete. Use trash icon to delete.</div>
+  </div>
+
+  <script>
+    const todoInput = document.getElementById('todo-input');
+    const addBtn = document.getElementById('add-btn');
+    const todoList = document.getElementById('todo-list');
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Load theme from localStorage
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        body.classList.add('dark');
+        themeToggle.textContent = 'Light Mode';
+        themeToggle.setAttribute('aria-pressed', 'true');
+      } else {
+        body.classList.remove('dark');
+        themeToggle.textContent = 'Dark Mode';
+        themeToggle.setAttribute('aria-pressed', 'false');
+      }
+    }
+
+    loadTheme();
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      if (body.classList.contains('dark')) {
+        themeToggle.textContent = 'Light Mode';
+        themeToggle.setAttribute('aria-pressed', 'true');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeToggle.textContent = 'Dark Mode';
+        themeToggle.setAttribute('aria-pressed', 'false');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Load todos from localStorage
+    function loadTodos() {
+      const todos = JSON.parse(localStorage.getItem('todos')) || [];
+      todos.forEach(todo => addTodoToDOM(todo.text, todo.completed));
+    }
+
+    loadTodos();
+
+    function saveTodos() {
+      const todos = [];
+      todoList.querySelectorAll('li').forEach(li => {
+        todos.push({
+          text: li.querySelector('.todo-text').textContent,
+          completed: li.classList.contains('completed')
+        });
+      });
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function addTodoToDOM(text, completed = false) {
+      const li = document.createElement('li');
+      if (completed) li.classList.add('completed');
+
+      // Circle checkbox
+      const checkmark = document.createElement('span');
+      checkmark.className = 'checkmark';
+      checkmark.setAttribute('role', 'checkbox');
+      checkmark.setAttribute('aria-checked', completed);
+      checkmark.setAttribute('tabindex', '0');
+      checkmark.addEventListener('click', () => toggleComplete(li));
+      checkmark.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleComplete(li);
+        }
+      });
+
+      // Text span
+      const span = document.createElement('span');
+      span.className = 'todo-text';
+      span.textContent = text;
+      span.setAttribute('tabindex', '0');
+      span.setAttribute('role', 'button');
+      span.setAttribute('aria-pressed', completed);
+      span.addEventListener('click', () => toggleComplete(li));
+      span.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleComplete(li);
+        }
+      });
+
+      // Buttons container
+      const btnsDiv = document.createElement('div');
+      btnsDiv.className = 'btns';
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'btn delete';
+      deleteBtn.title = 'Delete task';
+      deleteBtn.setAttribute('aria-label', `Delete task: ${text}`);
+      deleteBtn.innerHTML = '🗑️';
+      deleteBtn.addEventListener('click', () => deleteTodo(li));
+
+      btnsDiv.appendChild(deleteBtn);
+
+      li.appendChild(checkmark);
+      li.appendChild(span);
+      li.appendChild(btnsDiv);
+
+      todoList.appendChild(li);
+    }
+
+    function toggleComplete(li) {
+      li.classList.toggle('completed');
+      const isCompleted = li.classList.contains('completed');
+      li.querySelector('.checkmark').setAttribute('aria-checked', isCompleted);
+      li.querySelector('.todo-text').setAttribute('aria-pressed', isCompleted);
+      saveTodos();
+    }
+
+    function deleteTodo(li) {
+      li.classList.add('fade-out');
+      li.addEventListener('animationend', () => {
+        li.remove();
+        saveTodos();
+      });
+    }
+
+    addBtn.addEventListener('click', () => {
+      const text = todoInput.value.trim();
+      if (!text) {
+        alert('Please enter a task.');
+        return;
+      }
+      addTodoToDOM(text);
+      todoInput.value = '';
+      todoInput.focus();
+      saveTodos();
+    });
+
+    todoInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        addBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
